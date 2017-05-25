@@ -2,6 +2,7 @@
 	"name": "World 2",
 	"width": 60,
 	"height": 10,
+	"kind": "Underwater",
 	"background-color": [130, 182, 255],
 	"background-img": "assets/backgrounds/mountains.png",
 	"background-position": "bottom",
@@ -64,5 +65,6 @@
 	"coco": [[29, 4], [46,4], [54,7]],
 	"oneups": [[15, 2], [12, 4]],
 	"hearts": [[27, 0], [43,8], [59,3]],
+	"rainbow_carrot":[[1, 7]],
 	"flag": [[56, 2]]
 }

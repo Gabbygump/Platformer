@@ -2,6 +2,7 @@
 	"name": "World 8",
 	"width": 60,
 	"height": 10,
+	"kind": "Underwater",
 	"background-color": [130, 182, 255],
 	"background-img": "assets/backgrounds/cloud_day.png",
 	"background-position": "top",
@@ -46,6 +47,7 @@
   "carrot": [[19, 7], [13, 2], [22, 6], [28, 3],[40,3],[44, 5], [49,8], [50,8], [51, 8], [56, 6]],
 	"apple": [[34, 0], [38, 2], [23, 6],[15, 8], [4,8],[4, 7], [15, 6],[35, 5]],
 	"coco": [[7, 2], [46, 6], [58,7]],
+	"rainbow_carrot":[[1, 7]],
 	"oneups": [[18, 2], [30,2], [56,8]],
 	"hearts": [[15, 1], [4,4]],
 	"flag": [

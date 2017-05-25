@@ -2,6 +2,7 @@
 	"name": "World 1",
 	"width": 60,
 	"height": 10,
+	"kind": "Underwater",
 	"background-color": [130, 182, 255],
 	"background-img": "assets/backgrounds/cloud_day.png",
 	"background-position": "top",
@@ -54,6 +55,7 @@
 	"apple": [[13, 5], [29, 6], [46, 3],[54, 6]],
 	"coco": [[36, 3], [15, 4]],
 	"oneups": [[27, 4]],
+	"rainbow_carrot":[[1, 7]],
 	"hearts": [[11, 8], [43,8]],
 	"flag": [
 	[59, 8]]

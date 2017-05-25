@@ -23,14 +23,20 @@ RIGHT = pygame.K_RIGHT
 JUMP = pygame.K_SPACE
 
 # Levels
-levels = ["levels/world-1.json",
-          "levels/world-2.json",
-          "levels/world-3.json"]
+levels = [#"levels/world-1.json",
+          #"levels/world-2.json",
+          #"levels/world-3.json",
+          "levels/world-5.json",
+          #"levels/world-6.json",
+          #"levels/world-7.json",
+          #"levels/world-8.json"
+          ]
 
 # Colors
 TRANSPARENT = (0, 0, 0, 0)
 DARK_BLUE = (16, 86, 103)
 WHITE = (255, 255, 255)
+SKY_BLUE = (106, 255, 255)
 
 # Fonts
 FONT_SM = pygame.font.Font("assets/fonts/Gloria.ttf", 32)
@@ -75,17 +81,23 @@ block_images = {"TL": load_image("assets/tiles/slice03_03.png"),
                 "SP": load_image("assets/tiles/slice03_03.png")}
 
 carrot_img = load_image("assets/items/carrot.png")
+carrot2_img = load_image("assets/items/carrot.png", 250, 250)
+carrot3_img = load_image("assets/items/carrot3.png", 250, 250)
 rabbit_img = load_image("assets/items/rabbit.png", 32, 32)
+rabbit2_img = load_image("assets/items/rabbit1.png", 200, 200)
 apple_img = load_image("assets/items/apple.png")
 coco_img = load_image("assets/items/Coco.png")
 heart_img = load_image("assets/items/heart2.0.png")
 heart2_img = load_image("assets/items/heart2.0.png", 32, 32)
 oneup_img = load_image("assets/items/extra_life.png")
 flag_img = load_image("assets/items/bush.png")
+owl_img = load_image("assets/items/new_owl.png", 200, 200)
+fox2_img = load_image("assets/enemies/fox.png", 200, 200)
+rainbow_carrot_img = load_image("assets/items/rainbow_carrot.png")
 
 
-owl_img1 = load_image("assets/enemies/owl.png")
-owl_img2 = load_image("assets/enemies/owl.png")
+owl_img1 = load_image("assets/items/new_owl.png")
+owl_img2 = load_image("assets/items/new_owl.png")
 owl_images = [owl_img1, owl_img2]
 
 fox_img = load_image("assets/enemies/fox.png")
@@ -162,16 +174,18 @@ class Character(Entity):
     def stop(self):
         self.vx = 0
 
-    def jump(self, blocks):
+    def jump(self, level):
         self.rect.y += 1
 
-        hit_list = pygame.sprite.spritecollide(self, blocks, False)
+        hit_list = pygame.sprite.spritecollide(self, level.blocks, False)
 
-        if len(hit_list) > 0:
+        if len(hit_list) > 0 or level.kind == "underwater" :
             self.vy = -1 * self.jump_power
             play_sound(JUMP_SOUND)
 
         self.rect.y -= 1
+
+        
 
     def check_world_boundaries(self, level):
         if self.rect.left < 0:
@@ -194,7 +208,7 @@ class Character(Entity):
                 self.vx = 0
 
         self.on_ground = False
-        self.rect.y += self.vy
+        self.rect.y += self.vy +1
         hit_list = pygame.sprite.spritecollide(self, blocks, False)
 
         for block in hit_list:
@@ -216,10 +230,19 @@ class Character(Entity):
     def process_enemies(self, enemies):
         hit_list = pygame.sprite.spritecollide(self, enemies, False)
 
-        if len(hit_list) > 0 and self.invincibility == 0:
-            play_sound(HURT_SOUND)
-            self.hearts -= 1
-            self.invincibility = int(0.75 * FPS)
+        for p in hit_list:
+
+             if self.invincibility == 0 and self.vy > 0:
+                pygame.sprite.Sprite.kill(p)
+                self.vy -= 20
+                play_sound(HURT_SOUND)
+                self.score += 16
+
+             elif self.invincibility == 0:
+                play_sound(HURT_SOUND)
+                self.hearts -= 1
+                self.invincibility = int(0.75 * FPS)
+
 
     def process_powerups(self, powerups):
         hit_list = pygame.sprite.spritecollide(self, powerups, True)
@@ -306,6 +329,7 @@ class Coco(Entity):
 
         self.value = -1
 
+
 class Enemy(Entity):
     def __init__(self, x, y, images):
         super().__init__(x, y, images[0])
@@ -386,7 +410,7 @@ class Fox(Enemy):
                 self.rect.left = block.rect.right
                 self.reverse()
 
-        self.rect.y += self.vy
+        self.rect.y += self.vy + 1
         hit_list = pygame.sprite.spritecollide(self, blocks, False)
 
         for block in hit_list:
@@ -423,7 +447,7 @@ class Owl(Enemy):
                 self.rect.left = block.rect.right
                 self.reverse()
 
-        self.rect.y += self.vy
+        self.rect.y += self.vy + 1
         hit_list = pygame.sprite.spritecollide(self, blocks, False)
 
         reverse = True
@@ -461,6 +485,14 @@ class Heart(Entity):
         character.hearts += 1
         character.hearts = max(character.hearts, character.max_hearts)
 
+class Rainbow_carrot(Entity):
+    def __init__(self, x, y, image):
+        super().__init__(x, y, image)
+        
+    def apply(self, character):
+        character.invincibility += int(5.0 * FPS)
+        
+
 class Flag(Entity):
     def __init__(self, x, y, image):
         super().__init__(x, y, image)
@@ -490,7 +522,9 @@ class Level():
 
         self.width = map_data['width'] * GRID_SIZE
         self.height = map_data['height'] * GRID_SIZE
-
+        
+        self.kind = map_data['kind'] 
+        
         self.start_x = map_data['start'][0] * GRID_SIZE
         self.start_y = map_data['start'][1] * GRID_SIZE
 
@@ -526,6 +560,10 @@ class Level():
         for item in map_data['hearts']:
             x, y = item[0] * GRID_SIZE, item[1] * GRID_SIZE
             self.starting_powerups.append(Heart(x, y, heart_img))
+
+        for item in map_data['rainbow_carrot']:
+            x, y = item[0] * GRID_SIZE, item[1] * GRID_SIZE
+            self.starting_powerups.append(Rainbow_carrot(x, y, rainbow_carrot_img))
 
         for i, item in enumerate(map_data['flag']):
             x, y = item[0] * GRID_SIZE, item[1] * GRID_SIZE
@@ -647,8 +685,40 @@ class Game():
         self.stage = Game.SPLASH
 
     def display_splash(self, surface):
+        surface.fill (SKY_BLUE)
         line1 = FONT_LG.render(TITLE, 1, DARK_BLUE)
         line2 = FONT_SM.render("Press any key to start.", 1, DARK_BLUE)
+        line3 = FONT_SM.render("Collect as many carrots and apples as you can!", 1, DARK_BLUE)
+        line4 = FONT_SM.render("Beware of the chocolate bars! They aren't healthy for bunnies!", 1, DARK_BLUE)
+
+        x1 = WIDTH / 2 - line1.get_width() / 2;
+        y1 = HEIGHT / 3 - line1.get_height() / 2;
+
+        x2 = WIDTH / 2 - line2.get_width() / 2;
+        y2 = y1 + line1.get_height() + 16;
+
+        x3 = WIDTH / 2 - line3.get_width() / 2;
+        y3 = y1 + line1.get_height() + 40;
+
+        x4 = WIDTH / 2 - line4.get_width() / 2;
+        y4 = y1 + line1.get_height() + 65;
+
+        
+        surface.blit(line1, (x1, y1))
+        surface.blit(line2, (x2, y2))
+        surface.blit(line3, (x3, y3))
+        surface.blit(line4, (x4, y4))
+        surface.blit(carrot2_img, (925,150))
+        surface.blit(carrot3_img, (60,150))
+        surface.blit(rabbit2_img, (500,400))
+        surface.blit(fox2_img, (200,400))
+        surface.blit(owl_img, (800,400))
+
+    def display_victory(self, surface):
+        surface.fill (SKY_BLUE)
+        line1 = FONT_LG.render("You Win!!!!!!!!!!", 3, DARK_BLUE)
+        line2 = FONT_SM.render("Please press the r key to play again!", 3, DARK_BLUE)
+    
 
         x1 = WIDTH / 2 - line1.get_width() / 2;
         y1 = HEIGHT / 3 - line1.get_height() / 2;
@@ -697,7 +767,7 @@ class Game():
 
                 elif self.stage == Game.PLAYING:
                     if event.key == JUMP:
-                        self.hero.jump(self.level.blocks)
+                        self.hero.jump(self.level)
 
                 elif self.stage == Game.PAUSED:
                     pass
@@ -774,7 +844,7 @@ class Game():
         elif self.stage == Game.LEVEL_COMPLETED:
             self.display_message(self.window, "Level Complete", "Press any key to continue.")
         elif self.stage == Game.VICTORY:
-            self.display_message(self.window, "You Win!", "Press 'R' to restart.")
+            self.display_victory(self.window)
         elif self.stage == Game.GAME_OVER:
             self.display_message(self.window, "Game Over", "Press 'R' to restart.")
 
