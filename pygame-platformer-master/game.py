@@ -23,13 +23,8 @@ RIGHT = pygame.K_RIGHT
 JUMP = pygame.K_SPACE
 
 # Levels
-levels = [#"levels/world-1.json",
-          #"levels/world-2.json",
-          #"levels/world-3.json",
-          "levels/world-5.json",
-          #"levels/world-6.json",
-          #"levels/world-7.json",
-          #"levels/world-8.json"
+levels = [
+          "levels/world-8.json"
           ]
 
 # Colors
