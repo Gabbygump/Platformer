@@ -23,7 +23,13 @@ RIGHT = pygame.K_RIGHT
 JUMP = pygame.K_SPACE
 
 # Levels
-levels = [
+levels = ["levels/world-1.json",
+          "levels/world-2.json",
+          "levels/world-3.json",
+          "levels/world-4.json",
+          "levels/world-5.json",
+          "levels/world-6.json",
+          "levels/world-7.json",
           "levels/world-8.json"
           ]
 
@@ -66,14 +72,13 @@ hero_images = {"run": [hero_walk1],
                "idle": hero_idle}
 
 block_images = {"TL": load_image("assets/tiles/slice03_03.png"),
-                "TM": load_image("assets/tiles/slice03_03.png"),
-                "TR": load_image("assets/tiles/slice03_03.png"),
-                "ER": load_image("assets/tiles/slice03_03.png"),
-                "EL": load_image("assets/tiles/slice03_03.png"),
-                "TP": load_image("assets/tiles/slice03_03.png"),
-                "CN": load_image("assets/tiles/slice03_03.png"),
-                "LF": load_image("assets/tiles/slice03_03.png"),
-                "SP": load_image("assets/tiles/slice03_03.png")}
+                "TM": load_image("assets/tiles/rainbow.png"),
+                "TR": load_image("assets/tiles/2.png"),
+                "ER": load_image("assets/tiles/snow.png"),
+                "EL": load_image("assets/tiles/sea_title.png"),
+                "TP": load_image("assets/tiles/space_title.png"),
+                "LF": load_image("assets/tiles/gift_box.png"),
+                "SP": load_image("assets/tiles/doom1_tile.png")}
 
 carrot_img = load_image("assets/items/carrot.png")
 carrot2_img = load_image("assets/items/carrot.png", 250, 250)
